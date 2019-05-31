@@ -17,14 +17,24 @@ export default class TodoList extends React.Component {
 		};
 	}
 
-	_add = () => {
-		this.setState(
-			{
-				new: '',
-				todos: [[this.state.new, false], ...this.state.todos]
-			},
-			this._updateStorage
-		);
+	_add = event => {
+		if (this.state.new.length > 0) {
+			let code;
+			if (event.type === 'click') {
+				code = 13;
+			} else {
+				code = event.keyCode || event.which;
+			}
+			if (code === 13) {
+				this.setState(
+					{
+						new: '',
+						todos: [[this.state.new, false], ...this.state.todos]
+					},
+					this._updateStorage
+				);
+			}
+		}
 	};
 
 	_delete = index => {
@@ -55,13 +65,16 @@ export default class TodoList extends React.Component {
 					<p>
 						Easily keep track of your todos.
 						{this.storage &&
-							' Your todos will be stored even if you close the tab.'}
+							' Your todos will be stored even if you close the tab.'}{' '}
+						See the code{' '}
+						<a href='https://github.com/Brandons42/todo-list'>here</a>.
 					</p>
 					<div>
 						<input
 							type='text'
 							value={this.state.new}
 							onChange={event => this.setState({ new: event.target.value })}
+							onKeyPress={this._add}
 						/>
 						<button onClick={this._add}>Add</button>
 					</div>
@@ -81,6 +94,9 @@ export default class TodoList extends React.Component {
 							</button>
 						</label>
 					))}
+					{this.state.todos.length === 0 ? (
+						<p>Add a todo and see them appear here!</p>
+					) : null}
 				</section>
 			</div>
 		);
